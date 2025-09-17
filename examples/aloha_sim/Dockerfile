@@ -6,13 +6,15 @@
 # Run the container:
 # docker run --rm -it --network=host -v .:/app aloha_sim /bin/bash
 
-FROM python:3.11-slim@sha256:370c586a6ffc8c619e6d652f81c094b34b14b8f2fb9251f092de23f16e299b78
+# FROM python:3.11-slim@sha256:370c586a6ffc8c619e6d652f81c094b34b14b8f2fb9251f092de23f16e299b78
+FROM python:3.11-slim
 COPY --from=ghcr.io/astral-sh/uv:0.5.1 /uv /uvx /bin/
 
 RUN apt-get update && \
     apt-get install -y \
     libosmesa6-dev \
-    libgl1-mesa-glx \
+    # libgl1-mesa-glx \
+    libgl1 \  
     libglew-dev \
     libglfw3-dev \
     libgles2-mesa-dev
