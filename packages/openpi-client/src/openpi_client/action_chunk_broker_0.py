@@ -25,7 +25,23 @@ class ActionChunkBroker(_base_policy.BasePolicy):
 
     @override
     def infer(self, obs: Dict) -> Dict:  # noqa: UP006
-        return self._policy.infer(obs)
+        if self._last_results is None:
+            self._last_results = self._policy.infer(obs)
+            self._cur_step = 0
+
+        def slicer(x):
+            if isinstance(x, np.ndarray):
+                return x[self._cur_step, ...]
+            else:
+                return x
+
+        results = tree.map_structure(slicer, self._last_results)
+        self._cur_step += 1
+
+        if self._cur_step >= self._action_horizon:
+            self._last_results = None
+
+        return results
 
     @override
     def reset(self) -> None:
